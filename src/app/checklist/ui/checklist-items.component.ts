@@ -13,7 +13,6 @@ import { ChecklistItem } from '../../shared/interfaces/checklist-item';
         (change)="toggleItem.emit(item)"
       />
       <label [for]="item.id">{{ item.title }}</label>
-      {{ item.checked }}
     </li>
     } @empty {
     <div>
@@ -21,7 +20,7 @@ import { ChecklistItem } from '../../shared/interfaces/checklist-item';
       <p>Click the add button to add your first item to this quicklist</p>
     </div>
     }
-  </ul> `,
+  </ul>`,
 })
 export class ChecklistItems {
   readonly items = input.required<ChecklistItem[]>();

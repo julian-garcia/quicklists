@@ -5,6 +5,7 @@ import {
 } from '../../shared/interfaces/checklist-item';
 import { Subject } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Checklist } from '../../shared/interfaces/checklist';
 
 export interface ChecklistItemsState {
   checklistItems: ChecklistItem[];
@@ -18,6 +19,7 @@ export class ChecklistItemService {
   checklistItems = computed(() => this.#state().checklistItems);
   add$ = new Subject<AddChecklistItem>();
   toggle$ = new Subject<ChecklistItem>();
+  resetChecklist$ = new Subject<Checklist['id']>();
 
   constructor() {
     this.add$.pipe(takeUntilDestroyed()).subscribe((checklistItem) =>
@@ -43,6 +45,19 @@ export class ChecklistItemService {
             item.id === toggleItem.id &&
             item.checklistId === toggleItem.checklistId
               ? { ...item, checked: !item.checked }
+              : item
+          ),
+        ],
+      }))
+    );
+
+    this.resetChecklist$.pipe(takeUntilDestroyed()).subscribe((checklistId) =>
+      this.#state.update((state) => ({
+        ...state,
+        checklistItems: [
+          ...state.checklistItems.map((item) =>
+            item.checklistId === checklistId
+              ? { ...item, checked: false }
               : item
           ),
         ],

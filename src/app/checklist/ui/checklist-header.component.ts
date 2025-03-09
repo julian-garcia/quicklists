@@ -7,11 +7,13 @@ import { RouterLink } from '@angular/router';
   template: `<header>
     <button routerLink="/home">Back</button>
     <button (click)="addItem.emit()">Add item</button>
+    <button (click)="resetAll.emit(checklist().id)">Clear</button>
     <h1>{{ checklist().title }}</h1>
   </header>`,
   imports: [RouterLink],
 })
 export class ChecklistHeader {
   checklist = input.required<Checklist>();
-  addItem = output()
+  addItem = output();
+  resetAll = output<Checklist['id']>();
 }
