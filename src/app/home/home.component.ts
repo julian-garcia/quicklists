@@ -4,7 +4,7 @@ import { Checklist } from '../shared/interfaces/checklist';
 import { FormBuilder } from '@angular/forms';
 import FormModal from '../shared/ui/form-modal.component';
 import { ChecklistService } from '../shared/data-access/checklist.service';
-import { ChecklistListComponent } from "./ui/checklist-list.component";
+import { ChecklistListComponent } from './ui/checklist-list.component';
 
 @Component({
   selector: 'app-home',
@@ -17,12 +17,23 @@ import { ChecklistListComponent } from "./ui/checklist-list.component";
         <app-form-modal
           [formGroup]="checklistForm"
           [title]="checklistBeingEdited()?.title ?? 'Add checklist'"
-          (save)="checklistService.add$.next(checklistForm.getRawValue())"
+          (save)="
+            checklistBeingEdited()?.id
+              ? checklistService.edit$.next({
+                  id: checklistBeingEdited()?.id ?? '',
+                  data: checklistForm.getRawValue()
+                })
+              : checklistService.add$.next(checklistForm.getRawValue())
+          "
           (close)="checklistBeingEdited.set(null)"
         ></app-form-modal>
       </ng-template>
     </app-modal>
-    <app-checklist-list [checklists]="checklistService.checklists()"></app-checklist-list>`,
+    <app-checklist-list
+      [checklists]="checklistService.checklists()"
+      (editItem)="checklistBeingEdited.set($event)"
+      (deleteItem)="checklistService.delete$.next($event)"
+    ></app-checklist-list>`,
   imports: [Modal, FormModal, ChecklistListComponent],
 })
 export default class HomeComponent {
@@ -35,6 +46,10 @@ export default class HomeComponent {
     effect(() => {
       if (this.checklistBeingEdited() === null) {
         this.checklistForm.reset();
+      } else {
+        this.checklistForm
+          .get('title')
+          ?.setValue(this.checklistBeingEdited()?.title ?? '');
       }
     });
   }

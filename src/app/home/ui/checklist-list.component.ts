@@ -1,4 +1,4 @@
-import { Component, input } from '@angular/core';
+import { Component, input, output } from '@angular/core';
 import { Checklist } from '../../shared/interfaces/checklist';
 import { RouterLink } from '@angular/router';
 
@@ -8,6 +8,8 @@ import { RouterLink } from '@angular/router';
     @for(list of checklists(); track list.id) {
     <li>
       <a routerLink="/checklist/{{ list.id }}">{{ list.title }}</a>
+      <button (click)="editItem.emit(list)">Edit</button>
+      <button (click)="deleteItem.emit(list.id)">Delete</button>
     </li>
     } @empty {
     <p>No lists</p>
@@ -17,4 +19,6 @@ import { RouterLink } from '@angular/router';
 })
 export class ChecklistListComponent {
   checklists = input.required<Checklist[]>();
+  editItem = output<Checklist>();
+  deleteItem = output<Checklist['id']>();
 }

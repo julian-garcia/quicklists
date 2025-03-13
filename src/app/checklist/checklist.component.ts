@@ -21,7 +21,9 @@ import { ChecklistItems } from './ui/checklist-items.component';
     ></app-checklist-header>
     <app-checklist-items
       [items]="items()"
+      (editItem)="checklistItemBeingEdited.set($event)"
       (toggleItem)="checklistItemService.toggle$.next($event)"
+      (deleteItem)="checklistItemService.delete$.next($event)"
     />
     <app-modal [isOpen]="!!checklistItemBeingEdited()">
       <ng-template>
@@ -29,9 +31,16 @@ import { ChecklistItems } from './ui/checklist-items.component';
           [formGroup]="checklistItemForm"
           [title]="checklistItemBeingEdited()?.title ?? 'Add checklist item'"
           (save)="
+            checklistItemBeingEdited()?.id ? checklistItemService.edit$.next({
+            data: {
+              item: checklistItemForm.getRawValue(),
+              checklistId: checklist.id,
+            },
+              id: checklistItemBeingEdited()?.id ?? ''
+            }) :
             checklistItemService.add$.next({
               item: checklistItemForm.getRawValue(),
-              checklistId: checklist.id
+              checklistId: checklist.id,
             })
           "
           (close)="checklistItemBeingEdited.set(null)"
@@ -47,6 +56,7 @@ export default class ChecklistComponent {
   route = inject(ActivatedRoute);
   params = toSignal(this.route.paramMap);
   formBuilder = inject(FormBuilder);
+
   checklistItemForm = this.formBuilder.nonNullable.group({
     title: [''],
   });
@@ -67,6 +77,10 @@ export default class ChecklistComponent {
     effect(() => {
       if (!this.checklistItemBeingEdited()) {
         this.checklistItemForm.reset();
+      } else {
+        this.checklistItemForm
+          .get('title')
+          ?.setValue(this.checklistItemBeingEdited()?.title || '');
       }
     });
   }
