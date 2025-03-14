@@ -51,8 +51,7 @@ export class ChecklistService {
       }))
     );
 
-    this.edit$.pipe(takeUntilDestroyed()).subscribe((checklist) => {
-      console.log(checklist);
+    this.edit$.pipe(takeUntilDestroyed()).subscribe((checklist) =>
       this.#state.update((state) => ({
         ...state,
         checklists: state.checklists.map((list) =>
@@ -63,8 +62,8 @@ export class ChecklistService {
               }
             : list
         ),
-      }));
-    });
+      }))
+    );
 
     this.#checklistsLoaded$.pipe(takeUntilDestroyed()).subscribe({
       next: (checklists) =>

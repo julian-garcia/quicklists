@@ -12,7 +12,7 @@ import { ChecklistItems } from './ui/checklist-items.component';
 
 @Component({
   selector: 'app-checklist',
-  template: `<h1>Test</h1>
+  template: `
     @if (checklist(); as checklist) {
     <app-checklist-header
       [checklist]="checklist"
@@ -47,7 +47,8 @@ import { ChecklistItems } from './ui/checklist-items.component';
         ></app-form-modal>
       </ng-template>
     </app-modal>
-    } `,
+    }
+  `,
   imports: [ChecklistHeader, Modal, FormModal, ChecklistItems],
 })
 export default class ChecklistComponent {

@@ -5,12 +5,15 @@ import { FormBuilder } from '@angular/forms';
 import FormModal from '../shared/ui/form-modal.component';
 import { ChecklistService } from '../shared/data-access/checklist.service';
 import { ChecklistListComponent } from './ui/checklist-list.component';
+import { ChecklistItemService } from '../checklist/data-access/checklist-item.service';
 
 @Component({
   selector: 'app-home',
   template: `<header>
-      <h1>Quicklists</h1>
-      <button (click)="checklistBeingEdited.set({})">Add Checklist</button>
+      <div class="header-content">
+        <h1>Quicklists</h1>
+        <button (click)="checklistBeingEdited.set({})">Add Checklist</button>
+      </div>
     </header>
     <app-modal [isOpen]="!!checklistBeingEdited()">
       <ng-template>
@@ -32,7 +35,10 @@ import { ChecklistListComponent } from './ui/checklist-list.component';
     <app-checklist-list
       [checklists]="checklistService.checklists()"
       (editItem)="checklistBeingEdited.set($event)"
-      (deleteItem)="checklistService.delete$.next($event)"
+      (deleteItem)="
+        checklistService.delete$.next($event);
+        checklistItemService.checklistRemoved$.next($event)
+      "
     ></app-checklist-list>`,
   imports: [Modal, FormModal, ChecklistListComponent],
 })
@@ -41,6 +47,7 @@ export default class HomeComponent {
   formBuilder = inject(FormBuilder);
   checklistForm = this.formBuilder.nonNullable.group({ title: [''] });
   checklistService = inject(ChecklistService);
+  checklistItemService = inject(ChecklistItemService);
 
   constructor() {
     effect(() => {

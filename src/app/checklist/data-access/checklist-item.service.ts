@@ -32,6 +32,7 @@ export class ChecklistItemService {
   edit$ = new Subject<EditChecklistItem>();
   toggle$ = new Subject<ChecklistItem>();
   delete$ = new Subject<ChecklistItem['id']>();
+  checklistRemoved$ = new Subject<Checklist['id']>();
   resetChecklist$ = new Subject<Checklist['id']>();
   #checklistItemsLoaded$ = this.storageService.loadChecklistItems();
 
@@ -51,8 +52,7 @@ export class ChecklistItemService {
       }))
     );
 
-    this.edit$.pipe(takeUntilDestroyed()).subscribe((checklistItem) => {
-      console.log(checklistItem);
+    this.edit$.pipe(takeUntilDestroyed()).subscribe((checklistItem) =>
       this.#state.update((state) => ({
         ...state,
         checklistItems: state.checklistItems.map((item) =>
@@ -63,8 +63,8 @@ export class ChecklistItemService {
               }
             : item
         ),
-      }));
-    });
+      }))
+    );
 
     this.toggle$.pipe(takeUntilDestroyed()).subscribe((toggleItem) =>
       this.#state.update((state) => ({
@@ -83,6 +83,15 @@ export class ChecklistItemService {
         ...state,
         checklistItems: [
           ...state.checklistItems.filter((item) => item.id !== itemId),
+        ],
+      }))
+    );
+
+    this.checklistRemoved$.pipe(takeUntilDestroyed()).subscribe((listId) =>
+      this.#state.update((state) => ({
+        ...state,
+        checklistItems: [
+          ...state.checklistItems.filter((item) => item.checklistId !== listId),
         ],
       }))
     );

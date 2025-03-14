@@ -1,4 +1,4 @@
-import { KeyValuePipe } from '@angular/common';
+import { KeyValuePipe, TitleCasePipe } from '@angular/common';
 import { Component, input, output } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 
@@ -12,7 +12,7 @@ import { FormGroup, ReactiveFormsModule } from '@angular/forms';
       <form [formGroup]="formGroup()" (ngSubmit)="save.emit(); close.emit()">
         @for (control of formGroup().controls | keyvalue; track control.key){
         <div>
-          <label [for]="control.key">{{ control.key }}</label>
+          <label [for]="control.key">{{ control.key | titlecase }}</label>
           <input
             [id]="control.key"
             type="text"
@@ -23,7 +23,22 @@ import { FormGroup, ReactiveFormsModule } from '@angular/forms';
         <button type="submit">Save</button>
       </form>
     </section>`,
-  imports: [ReactiveFormsModule, KeyValuePipe],
+  imports: [ReactiveFormsModule, KeyValuePipe, TitleCasePipe],
+  styles: [
+    `
+      form {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+      }
+      label {
+        margin-right: 1rem;
+      }
+      input {
+        padding: 6px;
+      }
+    `,
+  ],
 })
 export default class FormModal {
   formGroup = input.required<FormGroup>();
