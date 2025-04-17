@@ -5,8 +5,10 @@ import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 @Component({
   selector: 'app-form-modal',
   template: ` <header>
-      <h2>{{ title() }}</h2>
-      <button (click)="close.emit()">close</button>
+      <div class="header-content">
+        <h2>{{ title() }}</h2>
+        <button (click)="close.emit()">close</button>
+      </div>
     </header>
     <section>
       <form [formGroup]="formGroup()" (ngSubmit)="save.emit(); close.emit()">

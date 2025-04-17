@@ -16,6 +16,7 @@ import { ChecklistItems } from './ui/checklist-items.component';
     @if (checklist(); as checklist) {
     <app-checklist-header
       [checklist]="checklist"
+      [checkedCount]="checkedCount()"
       (addItem)="checklistItemBeingEdited.set({})"
       (resetAll)="checklistItemService.resetChecklist$.next($event)"
     ></app-checklist-header>
@@ -73,6 +74,10 @@ export default class ChecklistComponent {
       .checklistItems()
       .filter((c) => c.checklistId === this.params()?.get('id'))
   );
+  checkedCount = computed(() => ({
+    checked: this.items().filter((i) => i.checked).length,
+    total: this.items().length,
+  }));
 
   constructor() {
     effect(() => {

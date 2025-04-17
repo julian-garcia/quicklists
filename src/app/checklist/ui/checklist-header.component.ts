@@ -13,6 +13,18 @@ import { RouterLink } from '@angular/router';
         <button (click)="resetAll.emit(checklist().id)">Clear</button>
       </div>
     </div>
+    @if (checkedCount().total === 0) {
+    <p>Nothing to see here... 😐</p>
+    } @else if (checkedCount().checked === 0) {
+    <p>Get a wriggle on! 😴</p>
+    } @else if (checkedCount().checked === checkedCount().total) {
+    <p>You've done it all 👍</p>
+    } @else {
+    <p>
+      Getting there... {{ checkedCount().checked }} of
+      {{ checkedCount().total }} 🙂‍
+    </p>
+    }
   </header>`,
   imports: [RouterLink],
   styles: [
@@ -20,11 +32,16 @@ import { RouterLink } from '@angular/router';
       button {
         margin-left: 1rem;
       }
+      p {
+        margin: 0 2rem;
+        padding: 0 0 1rem;
+      }
     `,
   ],
 })
 export class ChecklistHeader {
   checklist = input.required<Checklist>();
+  checkedCount = input.required<{ checked: number; total: number }>();
   addItem = output();
   resetAll = output<Checklist['id']>();
 }
